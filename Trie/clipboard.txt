@@ -1,0 +1,210 @@
+for(int wordIndex = 1; wordIndex < allWords.length; wordIndex++){
+
+			TrieNode current = root.firstChild;
+			TrieNode prev = root;
+			
+			int startIndexWord = 0;
+			int endIndexWord = allWords[wordIndex].length() - 1;
+			
+			int startIndexPref = current.substr.startIndex;
+			int endIndexPref = current.substr.endIndex;
+
+			int lastMatchedIndex = 0;
+
+			while(startIndexPref <= endIndexPref){
+
+				char a = allWords[current.substr.wordIndex].charAt(startIndexPref);
+				char b = allWords[wordIndex].charAt(startIndexWord);
+
+				if (a == b && startIndexPref != endIndexPref){ //keep checking
+
+					System.out.println("StartIndexWord: " + startIndexWord);
+					System.out.println("StartIndexPref: " + startIndexPref);
+
+					System.out.println("keep checking");
+
+					lastMatchedIndex = startIndexWord;
+
+					startIndexWord ++;
+					startIndexPref ++;
+					
+
+				} else if (a == b && startIndexPref == endIndexPref){
+					//last check for whole prefix match (move down)
+					
+					System.out.println("-----------------------------");
+						
+					System.out.println("StartIndexWord: " + startIndexWord);
+					System.out.println("StartIndexPref: " + startIndexPref);
+
+					System.out.println("whole match prefix, move down");
+					 
+					if(current.firstChild != null){
+						
+						System.out.println("Current.first child exists");
+
+						current = current.firstChild; 
+						
+						startIndexPref = current.substr.startIndex;
+						endIndexPref = current.substr.endIndex;
+
+						//startIndexPref ++;
+						startIndexWord ++;
+
+
+					} else { //create new child with remaining prefix of index word
+						
+						System.out.println("Create new child remaining prefix");
+						System.out.println(startIndexWord+ 1);
+						System.out.println(endIndexWord);
+
+						Indexes tempIndex = new Indexes(
+						wordIndex,
+						(short) (startIndexWord + 1),
+						(short) endIndexWord);
+						
+						TrieNode temp = new TrieNode(tempIndex, null, null);
+
+						current.firstChild = temp;
+						break;
+						
+					}
+					
+
+				} else { 
+
+					if(startIndexPref == current.substr.startIndex) {
+						
+						System.out.println("-----------------------------");
+						
+						System.out.println("StartIndexWord: " + startIndexWord);
+						System.out.println("StartIndexPref: " + startIndexPref);
+
+						System.out.println("does not match current pref, next sibling");
+						
+						if(current.sibling != null){
+							
+							current = current.sibling;
+			
+							startIndexPref = current.substr.startIndex;
+							endIndexPref = current.substr.endIndex;
+
+						} else { //create new sibling node
+
+							System.out.println("Create new sibling");
+							System.out.println(startIndexWord);
+							System.out.println(endIndexWord);
+
+							Indexes tempIndex = new Indexes(
+							wordIndex,
+							(short) (startIndexWord),
+							(short) endIndexWord);
+						
+							TrieNode temp = new TrieNode(tempIndex, null, null);
+
+							current.sibling = temp;
+							break;
+
+						}
+					
+					} else {
+						// partial match found, new child
+						System.out.println("-----------------------------");
+						
+						System.out.println("StartIndexWord: " + startIndexWord);
+						System.out.println("StartIndexPref: " + startIndexPref);
+
+						System.out.println("partial match found, new child");
+						
+
+						Indexes childTmpIN = new Indexes(
+							current.substr.wordIndex,
+							(short) startIndexPref,
+							(short) endIndexPref);
+
+						TrieNode tempChild = new TrieNode(childTmpIN, null, null);
+						
+						Indexes sibTmpIN = new Indexes(
+							wordIndex,
+							(short) startIndexWord,
+							(short) endIndexWord);
+						
+						TrieNode tempSibling = new TrieNode(sibTmpIN, null, null);
+
+						current.substr.endIndex = (short) (startIndexPref - 1);
+
+						current.firstChild = tempChild;
+						current.firstChild.sibling = tempSibling;
+			
+						break; //temp
+
+						
+					}
+
+				}
+
+			}
+
+
+			System.out.println("::::: Next Word In Array: ");
+
+		}
+
+
+
+________________________________________________________________________________
+
+
+		boolean traversed = false;
+		boolean prefixMatched = false;
+
+		TrieNode curr = root.firstChild;
+
+		ArrayList<TrieNode> matches = new ArrayList<TrieNode>();
+
+		int startIndexSearch = 0;
+		int endIndexSearch = prefix.length() - 1;
+
+		int startIndexCurr = curr.substr.startIndex;
+		int endIndexCurr = curr.substr.endIndex;
+
+
+		do {
+
+			char a = allWords[curr.substr.wordIndex].charAt(startIndexCurr);
+			char b = prefix.charAt(startIndexSearch);
+
+			if(a == b){
+
+				if (startIndexCurr == endIndexCurr){
+					prefixMatched = true;
+					System.out.print("prefix matched");
+					break;
+				} 
+
+				startIndexCurr +=1;
+				startIndexSearch +=1;
+
+			} else {
+
+				if (startIndexCurr == curr.substr.startIndex){
+					//no match move sibling until match
+					if(curr.sibling != null){
+						curr = curr.sibling;
+					} else {
+						return null;
+					}
+
+				} else {
+					prefixMatched = true;
+					System.out.println("Prefix Matched");
+					break;
+				}
+
+			}
+
+			
+		} while (curr.sibling != null && curr.firstChild != null);
+
+		if(root.firstChild == null) return null;
+		else return matches; 

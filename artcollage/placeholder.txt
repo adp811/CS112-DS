@@ -1,0 +1,55 @@
+    public void colorizeTile (String component,  int collageCol, int collageRow) {
+
+
+        int startCol = (collageCol * tileDimension);
+        int startRow = (collageRow * tileDimension);
+
+        StdOut.println(startCol);
+        StdOut.println(startRow);
+
+
+        for(int t_col = startCol, i = 0; t_col < tileDimension+startCol; t_col++, i++){
+            for(int t_row = startRow, j = 0; t_row < tileDimension+startRow; t_row++, j++){
+
+                int s_col = i * original.width() /tileDimension;
+                int s_row = j * original.height() /tileDimension;
+
+                Color color = original.get(s_col, s_row);
+
+                if(component == "red"){
+                    collage.set(t_col, t_row, new Color(color.getRed(),0,0));
+                } else if (component == "green"){
+                    collage.set(t_col, t_row, new Color(0,color.getGreen(),0));
+                } else if (component == "blue"){
+                    collage.set(t_col, t_row, new Color(0,0,color.getBlue()));
+                }
+
+                StdOut.print("t_col: " + t_col + " ");
+                StdOut.println(" t_row: " + t_row);
+
+                StdOut.println();
+
+                StdOut.print("startcol: " + startCol + " ");
+                StdOut.println(" startrow: " + startRow);
+
+
+            }
+        }
+
+
+    }
+
+
+                StdOut.print("t_col: " + t_col + " ");
+                StdOut.println(" t_row: " + t_row);
+
+                StdOut.println();
+
+                StdOut.print("startcol: " + startCol + " ");
+                StdOut.println(" startrow: " + startRow);
+
+
+                            Color color = original.get(s_col, s_row);
+                            Color gray = Luminance.toGray(color);
+
+                            collage.set(t_col, t_row, gray);
